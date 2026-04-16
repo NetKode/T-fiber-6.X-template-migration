@@ -1,0 +1,116 @@
+module ip-route {
+  namespace "http://com/cisco/iproute";
+  prefix ip-route;
+
+  import ietf-inet-types { prefix inet; }
+  import tailf-ncs { prefix ncs; }
+  import tailf-common { prefix tailf; }
+
+  description "Improved ip-route service model for NSO 6.4 (safe, validated, production-ready)";
+
+  list ip-route {     ///this is the main list for ip-route services
+    key "device vrf-name destination-prefix"; ///unique key for each route entry (device + VRF + destination)
+
+    uses ncs:service-data;
+    ncs:servicepoint "ip-route";
+
+    /* ------------------- IDENTIFIERS ------------------- */
+
+    leaf service-id { 
+      type string;
+      mandatory true;
+      description "Unique service identifier from OSS";
+    }
+
+    leaf sub-service-id {  
+      type string;
+      mandatory true;
+      description "Service subtype identifier";
+    }
+
+    leaf circuit-id {
+      type string;
+      description "Customer circuit identifier";
+    }
+
+    /* ------------------- DEVICE ------------------- */
+
+    leaf device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+      description "Target device name from NSO inventory";
+    }
+
+    /* ------------------- VRF ------------------- */
+
+    leaf vrf-name {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "VRF name for route installation";
+    }
+
+    /* ------------------- IP TYPE ------------------- */
+
+    leaf ip-type {
+      type enumeration {
+        enum ipv4;
+        enum ipv6;
+        enum both;
+      }
+      mandatory true;
+      description "IP version type";
+    }
+
+    /* ------------------- IPV4 ROUTE ------------------- */
+
+    leaf destination-prefix {
+      when "../ip-type = 'ipv4' or ../ip-type = 'both'";
+      type inet:ipv4-address;
+      mandatory true;
+      description "Destination network address";
+    }
+
+    leaf destination-prefix-mask {
+      when "../ip-type = 'ipv4' or ../ip-type = 'both'";
+      type inet:ipv4-address;
+      mandatory true;
+      description "Subnet mask";
+    }
+
+    leaf forwarding-router-address {
+      when "../ip-type = 'ipv4' or ../ip-type = 'both'";
+      type inet:ipv4-address;
+      mandatory true;
+      description "Next-hop IP address";
+    }
+
+    /* ------------------- IPV6 ROUTE ------------------- */
+
+    leaf ipv6-prefix {
+      when "../ip-type = 'ipv6' or ../ip-type = 'both'";
+      type inet:ipv6-prefix;
+      description "IPv6 destination prefix";
+    }
+
+    leaf ipv6-next-hop {
+      when "../ip-type = 'ipv6' or ../ip-type = 'both'";
+      type inet:ipv6-address;
+      description "IPv6 next-hop address";
+    }
+
+    /* ------------------- VALIDATION ------------------- */
+
+    must "not(../ip-type = 'ipv4' and not(../destination-prefix))" {
+      error-message "IPv4 selected but destination-prefix missing";
+    }
+
+    must "not(../ip-type = 'ipv6' and not(../ipv6-prefix))" {
+      error-message "IPv6 selected but ipv6-prefix missing";
+    }
+
+  }
+}

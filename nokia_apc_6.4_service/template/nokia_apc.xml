@@ -1,0 +1,32 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="nokia-apc">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device}</name>
+
+      <config>
+        <ApcRemotePort xmlns="http://tail-f.com/ned/nokia-apc">
+
+          <objectName>{objectName}</objectName>
+
+          <templateName>{templateName}</templateName>
+
+          <templateVersion>{templateVersion}</templateVersion>
+
+          <suspendstate>{suspendstate}</suspendstate>
+
+          <!-- Dynamic Arguments -->
+          <?foreach {argument}?>
+            <argument>
+              <name>{argument-name}</name>
+              <value>{argument-value}</value>
+            </argument>
+          <?end?>
+
+        </ApcRemotePort>
+      </config>
+
+    </device>
+  </devices>
+</config-template>

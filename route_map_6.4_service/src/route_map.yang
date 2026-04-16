@@ -1,0 +1,90 @@
+module route-map {
+  namespace "http://com/cisco/tfiber/routemap";
+  prefix route-map;
+
+  import tailf-ncs { prefix ncs; }
+  import tailf-common { prefix tailf; }
+  import ietf-inet-types { prefix inet; }
+
+  description "Production-ready route-map service for NSO 6.4";
+
+  list route-map {
+    key "device name sequence";
+
+    uses ncs:service-data;
+    ncs:servicepoint "route-map";
+
+    /* ---------------- IDENTIFIERS ---------------- */
+
+    leaf service-id {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "Service ID";
+    }
+
+    leaf sub-service-id {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "Sub service ID";
+    }
+
+    /* ---------------- DEVICE ---------------- */
+
+    leaf device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+    }
+
+    /* ---------------- ROUTE-MAP CORE ---------------- */
+
+    leaf name {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "Route-map name";
+    }
+
+    leaf sequence {
+      type uint32;
+      mandatory true;
+      description "Sequence number";
+    }
+
+    leaf operation {
+      type enumeration {
+        enum permit;
+        enum deny;
+      }
+      mandatory true;
+      description "Route-map action";
+    }
+
+    /* ---------------- MATCH CONDITIONS ---------------- */
+
+    leaf prefix-list-ipv4 {
+      type string;
+      description "IPv4 prefix-list name";
+    }
+
+    leaf prefix-list-ipv6 {
+      type string;
+      description "IPv6 prefix-list name";
+    }
+
+    /* ---------------- SET ACTION ---------------- */
+
+    leaf local-preference {
+      type boolean;
+      default false;
+      description "Enable local preference setting";
+    }
+
+  }
+}

@@ -1,0 +1,19 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+
+  <name>tfiber-interfaces</name>
+
+  <package-version>2.0.0</package-version>
+
+  <description>
+    Production-ready tfiber interfaces resource facing service.
+    Supports L2/L3 interface provisioning, VLAN, VRF, QoS, BFD, VRRP.
+  </description>
+
+  <ncs-min-version>6.0</ncs-min-version>
+
+  <component>
+    <name>tfiber-interfaces-service</name>
+    <description>Interface provisioning service</description>
+  </component>
+
+</ncs-package>

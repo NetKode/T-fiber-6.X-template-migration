@@ -1,0 +1,99 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="ip-route">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device}</name>
+
+      <config>
+
+        <!-- ================= IOS (ASR920 / ASR907) ================= -->
+
+        <!-- IPv4 Static Route -->
+        <ip xmlns="urn:ios"
+            when="{ip-type = 'ipv4' or ip-type = 'both'}">
+
+          <route>
+            <vrf>
+              <name>{vrf-name}</name>
+
+              <ip-route-forwarding-list>
+                <prefix>{destination-prefix}</prefix>
+                <mask>{destination-prefix-mask}</mask>
+                <forwarding-address>{forwarding-router-address}</forwarding-address>
+              </ip-route-forwarding-list>
+
+            </vrf>
+          </route>
+        </ip>
+
+        <!-- IPv6 Static Route -->
+        <ipv6 xmlns="urn:ios"
+              when="{ip-type = 'ipv6' or ip-type = 'both'}">
+
+          <route>
+            <vrf>
+              <name>{vrf-name}</name>
+
+              <ipv6-route-list>
+                <prefix>{ipv6-prefix}</prefix>
+                <next-hop>{ipv6-next-hop}</next-hop>
+              </ipv6-route-list>
+
+            </vrf>
+          </route>
+        </ipv6>
+
+
+        <!-- ================= IOS-XR (ASR9K) ================= -->
+
+        <router xmlns="http://tail-f.com/ned/cisco-ios-xr">
+
+          <static>
+
+            <vrf>
+              <name>{vrf-name}</name>
+
+              <!-- IPv4 -->
+              <address-family when="{ip-type = 'ipv4' or ip-type = 'both'}">
+                <ipv4>
+                  <unicast>
+
+                    <routes-ip>
+                      <net>{destination-prefix}</net>
+                      <address>{destination-prefix-mask}</address>
+                      <next-hop>
+                        <address>{forwarding-router-address}</address>
+                      </next-hop>
+                    </routes-ip>
+
+                  </unicast>
+                </ipv4>
+              </address-family>
+
+              <!-- IPv6 -->
+              <address-family when="{ip-type = 'ipv6' or ip-type = 'both'}">
+                <ipv6>
+                  <unicast>
+
+                    <routes-ipv6>
+                      <prefix>{ipv6-prefix}</prefix>
+                      <next-hop>
+                        <address>{ipv6-next-hop}</address>
+                      </next-hop>
+                    </routes-ipv6>
+
+                  </unicast>
+                </ipv6>
+              </address-family>
+
+            </vrf>
+
+          </static>
+
+        </router>
+
+      </config>
+    </device>
+  </devices>
+</config-template>

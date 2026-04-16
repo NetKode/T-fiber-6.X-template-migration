@@ -1,0 +1,68 @@
+module qos {
+    namespace "http://com/example/qos";
+    prefix qos;
+
+    import ietf-inet-types { prefix inet; }
+    import tailf-ncs { prefix ncs; }
+    import tfiber-common { prefix common; }
+    import tailf-common { prefix tailf; }
+
+    description "Production-ready QoS service model for NSO 6.4";
+
+    list qos {
+        key "device qos-name transaction-id";
+
+        uses ncs:service-data;
+        ncs:servicepoint "qos";
+
+        /* ---------------- DEVICE ---------------- */
+
+        leaf device {
+            type leafref {
+                path "/ncs:devices/ncs:device/ncs:name";
+            }
+            mandatory true;
+            description "Target device";
+        }
+
+        /* ---------------- QoS NAME ---------------- */
+
+        leaf qos-name {
+            type common:qos-type;
+            mandatory true;
+            description "QoS profile type (e.g., GOLD, SILVER, XR_QOS)";
+        }
+
+        /* ---------------- TRANSACTION ---------------- */
+
+        leaf transaction-id {
+            type string {
+                length "1..64";
+            }
+            mandatory true;
+            description "Unique transaction identifier";
+        }
+
+        /* ---------------- SERVICE IDENTIFIERS ---------------- */
+
+        leaf sub-service-id {
+            type common:sub-service-id;
+            mandatory true;
+        }
+
+        leaf service-id {
+            type common:service-id;
+            mandatory true;
+        }
+
+        leaf circuit-id {
+            type common:non-empty-string;
+            description "Optional circuit identifier";
+        }
+
+        /* ---------------- QoS PARAMETERS ---------------- */
+
+        uses common:qos;
+
+    }
+}

@@ -1,0 +1,106 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="tfiber-interfaces-servicepoint">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device-name}</name>
+
+      <config>
+
+        <!-- ================= IOS CONFIG ================= -->
+
+        <interface xmlns="urn:ios" when="{starts-with(interface-id,'Gig')}">
+          <GigabitEthernet>
+            <name>{substring-after(interface-id,'Gig')}</name>
+
+            <description>{desc}</description>
+
+            <mtu when="{mtu}">{mtu}</mtu>
+
+            <service>
+              <instance foreach="{service-instance}">
+                <id>{service-instance-no}</id>
+
+                <ethernet/>
+
+                <encapsulation>
+                  <dot1q>
+                    <id foreach="{../customer-vlan}">{vlan-id}</id>
+                  </dot1q>
+                </encapsulation>
+
+                <xconnect when="{nei-ip}">
+                  <address>{nei-ip}</address>
+                  <vcid>{vpn-id}</vcid>
+                  <encapsulation>mpls</encapsulation>
+                </xconnect>
+
+                <bridge-domain when="{not(nei-ip)}">
+                  <bridge-id>{service-instance-no}</bridge-id>
+                </bridge-domain>
+
+              </instance>
+            </service>
+
+            <ip when="{ip-type='ipv4' or ip-type='both'}">
+              <address when="{contains(ipv4-address,' ')}">
+                <primary>
+                  <address>{substring-before(ipv4-address,' ')}</address>
+                  <mask>{substring-after(ipv4-address,' ')}</mask>
+                </primary>
+              </address>
+            </ip>
+
+            <ipv6 when="{ip-type='ipv6' or ip-type='both'}">
+              <address>
+                <prefix-list>
+                  <prefix>{ipv6-address}</prefix>
+                </prefix-list>
+              </address>
+            </ipv6>
+
+            <shutdown tags="delete"/>
+
+          </GigabitEthernet>
+        </interface>
+
+        <!-- ================= XR CONFIG ================= -->
+
+        <interface xmlns="http://tail-f.com/ned/cisco-ios-xr"
+                   when="{starts-with(interface-id,'TenGig')}">
+
+          <TenGigE>
+            <id>{substring-after(interface-id,'TenGigE')}</id>
+
+            <description>{desc}</description>
+
+            <mtu when="{mtu}">{mtu}</mtu>
+
+            <vrf when="{vrf-name}">{vrf-name}</vrf>
+
+            <ipv4 when="{ipv4-address}">
+              <address>
+                <ip>{substring-before(ipv4-address,' ')}</ip>
+                <mask>{substring-after(ipv4-address,' ')}</mask>
+              </address>
+            </ipv4>
+
+            <ipv6 when="{ipv6-address}">
+              <address>
+                <prefix-list>
+                  <prefix>{ipv6-address}</prefix>
+                </prefix-list>
+              </address>
+            </ipv6>
+
+            <shutdown tags="delete"/>
+
+          </TenGigE>
+
+        </interface>
+
+      </config>
+
+    </device>
+  </devices>
+</config-template>

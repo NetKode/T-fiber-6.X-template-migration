@@ -1,0 +1,43 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="nokia-cfs">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device}</name>
+
+      <config>
+        <nokia-apc xmlns="http://com/cisco/nokiaapc">
+
+          <service-id>{service-id}</service-id>
+          <circuit-id>{circuit-id}</circuit-id>
+
+          <objectName when="{objectName}">
+            {objectName}
+          </objectName>
+
+          <device>{device}</device>
+
+          <templateName when="{templateName}">
+            {templateName}
+          </templateName>
+
+          <templateVersion when="{templateVersion}">
+            {templateVersion}
+          </templateVersion>
+
+          <suspendstate>{suspendstate}</suspendstate>
+
+          <!-- Dynamic Arguments -->
+          <?foreach {argument}?>
+            <argument>
+              <argument-name>{argument-name}</argument-name>
+              <argument-value>{argument-value}</argument-value>
+            </argument>
+          <?end?>
+
+        </nokia-apc>
+      </config>
+
+    </device>
+  </devices>
+</config-template>

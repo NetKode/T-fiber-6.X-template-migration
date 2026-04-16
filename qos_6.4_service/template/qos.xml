@@ -1,0 +1,139 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="qos">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device}</name>
+
+      <config>
+
+        <!-- ================= CLASS MAP (INGRESS XR) ================= -->
+
+        <class-map xmlns="http://tail-f.com/ned/cisco-ios-xr"
+                   when="{inner-vlan1-name}">
+          <name>{service-provider-name}_CELL_{inner-vlan1-name}_IN</name>
+          <prematch>match-all</prematch>
+          <description>{class-map-desc}_{inner-vlan1-name}_IN</description>
+          <match>
+            <cos>
+              <cos-value>{inner-vlan1-pbit}</cos-value>
+            </cos>
+          </match>
+        </class-map>
+
+        <!-- FIXED SYNTAX ERROR -->
+        <class-map xmlns="http://tail-f.com/ned/cisco-ios-xr"
+                   when="{inner-vlan2-name}">
+          <name>{service-provider-name}_CELL_{inner-vlan2-name}_IN</name>
+          <prematch>match-all</prematch>
+          <description>{class-map-desc}_{inner-vlan2-name}_IN</description>
+          <match>
+            <cos>
+              <cos-value>{inner-vlan2-pbit}</cos-value>
+            </cos>
+          </match>
+        </class-map>
+
+        <!-- ================= POLICY MAP CHILD ================= -->
+
+        <policy-map xmlns="http://tail-f.com/ned/cisco-ios-xr">
+          <name>{service-provider-name}CELL_CHILD-IN</name>
+
+          <class>
+            <class-ref when="{inner-vlan1-name}">
+              <map>{service-provider-name}_CELL_{inner-vlan1-name}_IN</map>
+
+              <set>
+                <mpls>
+                  <experimental>
+                    <imposition>7</imposition>
+                  </experimental>
+                </mpls>
+                <qos-group>7</qos-group>
+              </set>
+
+            </class-ref>
+
+            <class-default>
+              <map>class-default</map>
+              <set>
+                <qos-group>0</qos-group>
+              </set>
+            </class-default>
+
+          </class>
+        </policy-map>
+
+        <!-- ================= PARENT POLICY ================= -->
+
+        <policy-map xmlns="http://tail-f.com/ned/cisco-ios-xr">
+          <name>{service-provider-name}CELL_PARENT-IN</name>
+
+          <class>
+            <class-default>
+              <map>class-default</map>
+              <service-policy>
+                <name>{service-provider-name}CELL_CHILD-IN</name>
+              </service-policy>
+            </class-default>
+          </class>
+
+        </policy-map>
+
+        <!-- ================= EGRESS POLICY ================= -->
+
+        <policy-map xmlns="urn:ios">
+          <name>{service-provider-name}CELL-OUT</name>
+
+          <class when="{inner-vlan1-name}">
+            <name>{service-provider-name}_CELL_{inner-vlan1-name}_OUT</name>
+
+            <priority when="{inner-vlan1-cir-percent}">
+              <level>1</level>
+              <percent>{inner-vlan1-cir-percent}</percent>
+            </priority>
+
+            <set>
+              <cos>
+                <val>7</val>
+              </cos>
+            </set>
+          </class>
+
+          <class-default>
+            <class>
+              <name>class-default</name>
+              <set>
+                <cos>
+                  <val>0</val>
+                </cos>
+              </set>
+            </class>
+          </class-default>
+
+        </policy-map>
+
+        <!-- ================= SHAPING POLICY ================= -->
+
+        <policy-map xmlns="urn:ios"
+                    when="{shape-value}">
+
+          <name>{policy-map-name}-OUT</name>
+
+          <class>
+            <name>class-default</name>
+
+            <shape>
+              <average>
+                <bit-rate>{shape-value}</bit-rate>
+              </average>
+            </shape>
+
+          </class>
+
+        </policy-map>
+
+      </config>
+    </device>
+  </devices>
+</config-template>

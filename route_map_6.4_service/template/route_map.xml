@@ -1,0 +1,44 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="route-map">
+
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{device}</name>
+
+      <config>
+        <route-map xmlns="urn:ios">
+
+          <name>{name}</name>
+          <sequence>{sequence}</sequence>
+          <operation>{operation}</operation>
+
+          <!-- MATCH SECTION -->
+          <match>
+
+            <ip when="{prefix-list-ipv4}">
+              <address>
+                <prefix-list>{prefix-list-ipv4}</prefix-list>
+              </address>
+            </ip>
+
+            <ipv6 when="{prefix-list-ipv6}">
+              <address>
+                <prefix-list>{prefix-list-ipv6}</prefix-list>
+              </address>
+            </ipv6>
+
+          </match>
+
+          <!-- SET SECTION -->
+          <set when="{local-preference = true}">
+            <local-preference>
+              <value>200</value>
+            </local-preference>
+          </set>
+
+        </route-map>
+      </config>
+
+    </device>
+  </devices>
+</config-template>

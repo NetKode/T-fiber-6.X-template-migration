@@ -1,0 +1,94 @@
+module nokia-apc {
+  namespace "http://com/cisco/nokiaapc";
+  prefix nokia-apc;
+
+  import ietf-inet-types { prefix inet; }
+  import tailf-ncs { prefix ncs; }
+
+  description "Production-ready Nokia APC service model for NSO 6.4";
+
+  list nokia-apc {
+    key "service-id";
+
+    uses ncs:service-data;
+    ncs:servicepoint "nokia-apc";
+
+    /* ---------------- IDENTIFIERS ---------------- */
+
+    leaf service-id {
+      type string {
+        length "1..64";
+      }
+      description "Unique service identifier";
+    }
+
+    leaf circuit-id {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "Customer circuit ID";
+    }
+
+    /* ---------------- TEMPLATE INFO ---------------- */
+
+    leaf objectName {
+      type string {
+        length "1..128";
+      }
+      mandatory true;
+    }
+
+    leaf templateName {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+    }
+
+    leaf templateVersion {
+      type string {
+        length "1..32";
+      }
+      mandatory true;
+    }
+
+    /* ---------------- SERVICE STATE ---------------- */
+
+    leaf suspendstate {
+      type enumeration {
+        enum ACTIVE;
+        enum SUSPENDED;
+      }
+      default ACTIVE;
+    }
+
+    /* ---------------- DEVICE ---------------- */
+
+    leaf device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+    }
+
+    /* ---------------- ARGUMENT LIST ---------------- */
+
+    list argument {
+      key "argument-name";
+
+      leaf argument-name {
+        type string {
+          length "1..64";
+        }
+      }
+
+      leaf argument-value {
+        type string {
+          length "1..256";
+        }
+      }
+    }
+
+  }
+}

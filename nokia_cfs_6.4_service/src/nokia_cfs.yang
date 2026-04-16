@@ -1,0 +1,96 @@
+module nokia-cfs {
+  namespace "http://com/example/nokiacfs";
+  prefix nokia-cfs;
+
+  import ietf-inet-types { prefix inet; }
+  import tailf-ncs { prefix ncs; }
+
+  description "Production-ready Nokia CFS YANG model for NSO 6.4";
+
+  list nokia-apc {
+    key "service-id";
+
+    uses ncs:service-data;
+    ncs:servicepoint "nokia-cfs";
+
+    /* ---------------- IDENTIFIERS ---------------- */
+
+    leaf service-id {
+      type string {
+        length "1..64";
+      }
+      description "Unique service identifier";
+    }
+
+    leaf circuit-id {
+      type string {
+        length "1..64";
+      }
+      mandatory true;
+      description "Customer circuit ID";
+    }
+
+    /* ---------------- TEMPLATE INFO ---------------- */
+
+    leaf objectName {
+      type string {
+        length "1..128";
+      }
+      description "Object reference name";
+    }
+
+    leaf templateName {
+      type string {
+        length "1..64";
+      }
+      description "Template name to be used";
+    }
+
+    leaf templateVersion {
+      type string {
+        length "1..32";
+      }
+      description "Template version";
+    }
+
+    /* ---------------- SERVICE STATE ---------------- */
+
+    leaf suspendstate {
+      type enumeration {
+        enum ACTIVE;
+        enum SUSPENDED;
+      }
+      default ACTIVE;
+      description "Service state";
+    }
+
+    /* ---------------- DEVICE ---------------- */
+
+    leaf device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+      description "Target device";
+    }
+
+    /* ---------------- ARGUMENT LIST ---------------- */
+
+    list argument {
+      key "argument-name";
+
+      leaf argument-name {
+        type string {
+          length "1..64";
+        }
+      }
+
+      leaf argument-value {
+        type string {
+          length "1..256";
+        }
+      }
+    }
+
+  }
+}

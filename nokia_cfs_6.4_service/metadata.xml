@@ -1,0 +1,20 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+
+  <name>nokia-cfs</name>
+
+  <package-version>2.0.0</package-version>
+
+  <description>
+    Production-ready Nokia CFS (Customer Facing Service) package.
+    Supports dynamic argument-based service modeling with validation.
+    Compatible with NSO 6.4.
+  </description>
+
+  <ncs-min-version>6.0</ncs-min-version>
+
+  <component>
+    <name>nokia-cfs-service</name>
+    <description>Nokia Customer Facing Service</description>
+  </component>
+
+</ncs-package>

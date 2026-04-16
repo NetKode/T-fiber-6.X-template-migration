@@ -1,0 +1,151 @@
+module tfiber-interfaces {
+    namespace "http://com/cisco/tfiberinterfaces";
+    prefix tfiber-interfaces;
+
+    import ietf-inet-types { prefix inet; }
+    import tailf-common { prefix tailf; }
+    import tailf-ncs { prefix ncs; }
+    import tfiber-common { prefix common; }
+
+    description "Production-safe tfiber interfaces service for NSO 6.4";
+
+    list tfiber-interfaces {
+        key "interface-id device-name transaction-id";
+
+        uses ncs:service-data;
+        ncs:servicepoint "tfiber-interfaces-servicepoint";
+
+        /* ---------------- BASIC ---------------- */
+
+        leaf interface-id {
+            type string;
+            mandatory true;
+        }
+
+        leaf device-name {
+            type leafref {
+                path "/ncs:devices/ncs:device/ncs:name";
+            }
+            mandatory true;
+        }
+
+        leaf service-id {
+            type string;
+            mandatory true;
+        }
+
+        leaf sub-service-id {
+            type string;
+            mandatory true;
+        }
+
+        leaf circuit-id {
+            type common:non-empty-string;
+        }
+
+        /* ---------------- FLAGS ---------------- */
+
+        leaf managed {
+            type enumeration {
+                enum managed;
+                enum unmanaged;
+            }
+        }
+
+        leaf dual-homed {
+            type boolean;
+            default false;
+        }
+
+        leaf ip-type {
+            type common:ip-types;
+            mandatory true;
+        }
+
+        leaf bfd-required {
+            type common:bfd-required;
+        }
+
+        /* ---------------- INTERFACE CONFIG ---------------- */
+
+        leaf interface-type {
+            type string;
+        }
+
+        leaf desc {
+            type string;
+        }
+
+        leaf mtu {
+            type uint32;
+        }
+
+        leaf vrf-name {
+            type string;
+        }
+
+        /* ---------------- VLAN ---------------- */
+
+        list customer-vlan {
+            key vlan-id;
+            leaf vlan-id {
+                type uint32 {
+                    range "1..4094";
+                }
+            }
+        }
+
+        /* ---------------- SERVICE INSTANCE ---------------- */
+
+        list service-instance {
+            key service-instance-no;
+
+            leaf service-instance-no {
+                type uint32;
+            }
+
+            leaf nei-ip {
+                type string;
+            }
+
+            leaf vpn-id {
+                type uint32;
+            }
+        }
+
+        /* ---------------- IP ---------------- */
+
+        leaf ipv4-address {
+            type string;
+        }
+
+        leaf ipv6-address {
+            type string;
+        }
+
+        /* ---------------- ACCESS CONTROL ---------------- */
+
+        leaf ipv4-access-group {
+            type string;
+        }
+
+        leaf ipv6-access-group {
+            type string;
+        }
+
+        /* ---------------- ADVANCED ---------------- */
+
+        leaf encapsulation {
+            type string;
+        }
+
+        leaf trunk-no {
+            type uint32;
+        }
+
+        leaf transaction-id {
+            type string;
+        }
+
+    }
+}
